@@ -49,6 +49,7 @@ env:
 jobs:
   e2e-mac:
     name: Desktop e2e (macOS)
+    if: false # DEMO ONLY
     runs-on: macos-15
     timeout-minutes: 40
     steps:
@@ -135,6 +136,18 @@ jobs:
         run: |
           bun run --cwd desktop dist:mac
           ls -l desktop/release
+      - name: DEMO ONLY - break the dmg (a build that lost its background picture)
+        run: |
+          cd desktop/release
+          f=$(ls *.dmg)
+          hdiutil convert "$f" -format UDRW -o rw.dmg
+          mkdir -p "$RUNNER_TEMP/rw"
+          dev=$(hdiutil attach rw.dmg -nobrowse -noautoopen -mountpoint "$RUNNER_TEMP/rw" | head -1 | awk '{print $1}')
+          rm -rf "$RUNNER_TEMP/rw/.background" "$RUNNER_TEMP"/rw/.background.*
+          hdiutil detach "$dev"
+          rm "$f"
+          hdiutil convert rw.dmg -format UDZO -o "$f"
+          rm rw.dmg
       - name: Mount the dmg and check it against the electron-builder settings
         run: bun scripts/ci/dmg-check.ts desktop/release
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -148,6 +161,7 @@ jobs:
 
   windows-install:
     name: Windows installer (install, update over, uninstall)
+    if: false # DEMO ONLY
     # the release builds the installer on windows-2025 too (release.yml build-windows); windows-latest is the same image
     runs-on: windows-2025
     timeout-minutes: 40
