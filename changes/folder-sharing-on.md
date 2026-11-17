@@ -1,2 +1,2 @@
-- You can share a folder in **My files** with teammates and groups: **Files › a folder's ⋯ › Share**, or ask Trina.
+- Sharing a folder in **My files** with teammates and groups (**Files › a folder's ⋯ › Share**, or ask Trina) ships switched off in this release. A server's operator can turn it on with `"folderShares": true` in server.json, then a restart.
 - When you ask Trina to change who can open a team folder and the change would not change anyone's access, Trina says so in one sentence instead of showing a card with **Change**.

@@ -57,6 +57,9 @@ review). Plan of this part: [20261116-1224-folder-share-server.md](../AGENTS/pla
   the rows go, and the archive their folder lands in is never shared.
 - **Gate:** none of this is reachable by people until the web part opens `config.folderShares` (no config key or
   environment variable sets it). It opens only after the widening checks are merged.
+  2026-11-17: the switch in code (`FOLDER_SHARES_OPEN`) is closed again for 0.5.12 until the manual folder-sharing QA
+  run passes, and the server config file key `folderShares` (boolean, server.json; read at start) now sets
+  `config.folderShares` per server, so a QA server can keep it on. No environment variable sets it.
 - **Left out here** (later parts of the design): counting share readers where "more people will see this" is decided,
   the dev environment's write refusal, the AI's tools, the screens. The design's shared-files mark
   (`chats.shared_files_seen`) is not built: the `chats.others_words` mark (migration 410, the #1109 batch) replaces it.

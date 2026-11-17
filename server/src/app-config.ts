@@ -223,6 +223,11 @@ export const AppConfigFile = z.object({
     maxFilesPerRun: z.number().int().min(0).max(1_000_000).optional(),
     maxTokensPerRun: z.number().int().min(0).max(1_000_000_000).optional(),
   }).strict().optional(),
+  /** Folder sharing's rollout gate (server/src/files/folder-share-gate.ts, docs/decisions/20261116-folder-share-server.md
+   * "Gate"): true lets people share folders in their own files on this server, false keeps it off. Absent: the switch in
+   * code (FOLDER_SHARES_OPEN). Read at start: a change needs a restart. For a QA server that tests folder sharing before
+   * it is open everywhere. */
+  folderShares: z.boolean().optional(),
   /** obsolete: the knowledge graph was removed (docs/DECISIONS.md, 2026-11-11). Accepted with any value and ignored,
    * so a file written for an older version still loads; the start logs it once (OBSOLETE_KEYS). */
   knowledgeGraph: z.unknown().optional(),
@@ -290,8 +295,8 @@ export interface AppConfig {
   /** keys of the config file that this version ignores (OBSOLETE_KEYS); the start logs them once */
   obsoleteKeys?: string[]
   /** Folder sharing's rollout gate (docs/decisions/20261116-folder-share-server.md): a person can share a folder in
-   * their own files only while this is true. Absent = off, on every server: no config file key and no environment
-   * variable sets it (tests do); the web part of the work turns it on in code, after the widening checks are merged. */
+   * their own files only while this is true. Absent = the switch in code (files/folder-share-gate.ts FOLDER_SHARES_OPEN).
+   * Set by the config file key `folderShares` (AppConfigFile) and by tests; no environment variable sets it. */
   folderShares?: boolean
 }
 
@@ -398,6 +403,7 @@ export function loadAppConfig(o: LoadOptions = {}): AppConfig {
     ...(deployment ? { deployment } : {}),
     ...(f.handoverSafe ? { handoverSafe: true } : {}),
     ...(f.fileList ? { fileList: f.fileList } : {}),
+    ...(f.folderShares !== undefined ? { folderShares: f.folderShares } : {}),
     ...(demo ? { demo } : {}),
     ...(obsolete.length ? { obsoleteKeys: obsolete } : {}),
   }

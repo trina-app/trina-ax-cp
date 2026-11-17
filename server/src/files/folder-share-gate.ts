@@ -3,9 +3,10 @@
 // Me.server.folderShares) reads it without loading the folder-share service.
 import type { AppConfig } from '../app-config'
 
-/** The switch in code: open (the widening checks, the design's PR 3, are on dev). Closing it again is this one line.
- * No config file key and no environment variable set it; `config.folderShares` (tests only) overrides it. */
-export const FOLDER_SHARES_OPEN: boolean = true
+/** The switch in code: closed for the release until the manual folder-sharing QA run passes (opening it again is this
+ * one line). A server's config file key `folderShares` (true or false; read at start) overrides it, as do tests through
+ * `config.folderShares`; no environment variable sets it. */
+export const FOLDER_SHARES_OPEN: boolean = false
 
 /** May a person share a folder in their own files on this server? */
 export function folderSharesOpen(config: Pick<AppConfig, 'folderShares'>): boolean {
