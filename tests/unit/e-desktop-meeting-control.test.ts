@@ -6,7 +6,14 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 // the main process's Electron parts are not used here (the dialog and the menu bar item are injected / off)
-mock.module('electron', () => ({ dialog: {}, Menu: {}, nativeImage: {}, shell: {}, Tray: class {} }))
+// Bun's module mock is one per test process: a later file's mock.module('electron') fills these in place but cannot add
+// a name, so every runtime name the desktop main modules import is declared here (office-update-desktop-updater needs
+// session, app, autoUpdater, BaseWindow and powerMonitor when it runs after this file in a CI shard)
+mock.module('electron', () => ({
+  app: {}, autoUpdater: {}, BaseWindow: class {}, BrowserWindow: class {}, clipboard: {}, dialog: {}, ipcMain: {}, Menu: {},
+  nativeImage: {}, nativeTheme: {}, net: {}, Notification: class {}, powerMonitor: {}, protocol: {}, session: {}, shell: {},
+  Tray: class {}, WebContentsView: class {},
+}))
 const { MeetingControl, NO_CALL_SOUND_MS } = await import('../../desktop/src/main/meeting-control')
 import type { DesktopMeetingState } from '../../shared/src/desktop-bridge'
 
